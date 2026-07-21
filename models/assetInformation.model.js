@@ -166,35 +166,35 @@ export default (sequelize, DataTypes) => {
 
         // Uncomment when masters are ready
 
-        // AssetInformation.belongsTo(models.AssetInformationCategory, {
-        //     foreignKey: "categoryId",
-        //     as: "category"
+        AssetInformation.belongsTo(models.AssetInformationCategory, {
+            foreignKey: "categoryId",
+            as: "category"
+        });
+
+        AssetInformation.belongsTo(models.VendorManagement, {
+            foreignKey: "vendorId",
+            as: "vendor"
+        });
+
+        AssetInformation.hasMany(models.EmployeeAssetAllocation, {
+            foreignKey: "assetId",
+            as: "allocations"
+        });
+
+        // AssetInformation.belongsTo(models.EmployeeDetails,{
+        //     foreignKey:"assignedEmployeeId",
+        //     as:"employee"
         // });
 
-        // AssetInformation.belongsTo(models.VendorManagement, {
-        //     foreignKey: "vendorId",
-        //     as: "vendor"
+        // AssetInformation.belongsTo(models.Department,{
+        //     foreignKey:"departmentId",
+        //     as:"department"
         // });
 
-        // AssetInformation.hasMany(models.EmployeeAssetAllocation, {
-        //     foreignKey: "assetId",
-        //     as: "allocations"
-        // });
-
-        // // AssetInformation.belongsTo(models.EmployeeDetails,{
-        // //     foreignKey:"assignedEmployeeId",
-        // //     as:"employee"
-        // // });
-
-        // // AssetInformation.belongsTo(models.Department,{
-        // //     foreignKey:"departmentId",
-        // //     as:"department"
-        // // });
-
-        // AssetInformation.belongsTo(models.AssetInformationStatus, {
-        //     foreignKey: "statusId",
-        //     as: "status"
-        // });
+        AssetInformation.belongsTo(models.AssetInformationStatus, {
+            foreignKey: "statusId",
+            as: "status"
+        });
 
 
 
