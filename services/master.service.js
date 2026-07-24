@@ -7,8 +7,8 @@ class MasterService {
      */
     async getAll(model, query = {}) {
 
-        const page = Number(query.page) || 1;
-        const limit = Number(query.limit) || 10;
+        const page = Number(query.pageNumber) || 1;
+        const limit = Number(query.pageSize) || 10;
         const search = query.search || "";
         const sort = query.sort || "id";
         const order = query.order || "DESC";
