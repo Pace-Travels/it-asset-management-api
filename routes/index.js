@@ -14,6 +14,7 @@ import internetManagement from "./module/internetManagement.routes.js";
 import mobileRechargeManagement from "./module/mobileRechargeManagement.routes.js";
 import employeeAssetAllocation from "./module/employeeAssetAllocation.routes.js";
 import subscription from "./module/subscription.routes.js";
+import userRole from "./module/userRole.routes.js";
 
 const router = Router();
 
@@ -32,5 +33,6 @@ router.use('/internet-management', internetManagement);
 router.use('/mobile-recharge-management', mobileRechargeManagement);
 router.use('/employee-asset-allocation', employeeAssetAllocation);
 router.use('/subscription', subscription);
+router.use('/user-role', userRole);
 
 export default router;
