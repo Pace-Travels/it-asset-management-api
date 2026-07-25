@@ -135,6 +135,14 @@ const MasterRegistry = {
 
     "admin-type" : "AdminType",
 
+    /*
+    |--------------------------------------------------------------------------
+    | AdminStatus
+    |--------------------------------------------------------------------------
+    */
+
+    "admin-status" : "AdminStatus",
+
 };
 
 export default MasterRegistry;

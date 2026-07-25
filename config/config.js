@@ -12,16 +12,23 @@ const CONFIG = {
         host: process.env.DB_HOST,
         port: process.env.DB_PORT,
 
-        database : process.env.DB_NAME,
+        database: process.env.DB_NAME,
         username: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         dialect: "mysql",
-        logging:false
+        logging: false
     },
 
     jwt: {
-        secret: process.env.JWT_SECRET,
-        expiresIn: "1d"
+
+        accessSecret: process.env.JWT_ACCESS_SECRET,
+
+        refreshSecret: process.env.JWT_REFRESH_SECRET,
+
+        accessExpire: process.env.JWT_ACCESS_EXPIRE,
+
+        refreshExpire: process.env.JWT_REFRESH_EXPIRE
+
     }
 };
 
