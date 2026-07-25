@@ -4,6 +4,7 @@ import validation from "../validation/admin.validation.js";
 import MESSAGE from "../constants/messages.js";
 import { getPaginatedData } from "../services/common/pagination.service.js";
 import bcrypt from "bcryptjs";
+import CONFIG from "../config/config.js";
 
 const add = async (req, res) => {
 
