@@ -4,7 +4,7 @@ import validation from "../validation/admin.validation.js";
 import MESSAGE from "../constants/messages.js";
 import { getPaginatedData } from "../services/common/pagination.service.js";
 import bcrypt from "bcryptjs";
-import CONFIG from "../config/config.js";
+import JwtService from "../services/jwt.service.js";
 
 const add = async (req, res) => {
 
@@ -118,25 +118,25 @@ const fetchAll = async (req, res) => {
                 {
                     model: model.UserRole,
                     as: "userRole",
-                    attributes: ["id", "roleName"]
+                    attributes: ["id", "name"]
                 },
 
                 {
                     model: model.UserType,
                     as: "userType",
-                    attributes: ["id", "userTypeName"]
+                    attributes: ["id", "name"]
                 },
 
                 {
                     model: model.Department,
                     as: "department",
-                    attributes: ["id", "departmentName"]
+                    attributes: ["id", "name"]
                 },
 
                 {
                     model: model.AdminStatus,
                     as: "status",
-                    attributes: ["id", "statusName"]
+                    attributes: ["id", "name"]
                 }
 
             ],
@@ -638,7 +638,7 @@ const me = async (req, res) => {
 
                         "id",
 
-                        "roleName"
+                        "name"
 
                     ]
 
@@ -654,7 +654,7 @@ const me = async (req, res) => {
 
                         "id",
 
-                        "userTypeName"
+                        "name"
 
                     ]
 
@@ -670,7 +670,7 @@ const me = async (req, res) => {
 
                         "id",
 
-                        "statusName"
+                        "name"
 
                     ]
 

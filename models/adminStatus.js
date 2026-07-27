@@ -46,7 +46,7 @@ export default (sequelize, DataTypes) => {
             }
         },
         {
-            tableName: "user_role_status",
+            tableName: "admin_satus",
             timestamps: true,
         }
     );
