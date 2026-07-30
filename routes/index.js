@@ -16,6 +16,8 @@ import employeeAssetAllocation from "./module/employeeAssetAllocation.routes.js"
 import subscription from "./module/subscription.routes.js";
 import userRole from "./module/userRole.routes.js";
 import admin from "./module/admin.routes.js";
+import menu from "./module/menu.routes.js";
+import rolePermission from "./module/role-permisssion.routes.js"
 
 const router = Router();
 
@@ -36,5 +38,7 @@ router.use('/employee-asset-allocation', employeeAssetAllocation);
 router.use('/subscription', subscription);
 router.use('/user-role', userRole);
 router.use('/admin', admin);
+router.use('/menu', menu);
+router.use('/role-permission', rolePermission);
 
 export default router;

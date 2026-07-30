@@ -143,6 +143,14 @@ const MasterRegistry = {
 
     "admin-status" : "AdminStatus",
 
+    /*
+    |--------------------------------------------------------------------------
+    | permission
+    |--------------------------------------------------------------------------
+    */
+
+    "permission" : "Permission",
+
 };
 
 export default MasterRegistry;
