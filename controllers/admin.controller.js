@@ -5,19 +5,14 @@ import MESSAGE from "../constants/messages.js";
 import { getPaginatedData } from "../services/common/pagination.service.js";
 import bcrypt from "bcryptjs";
 import JwtService from "../services/jwt.service.js";
+import { Op } from "sequelize";
 
 const add = async (req, res) => {
-
     try {
-
         const { error } = validation.addAdmin.validate(req.body);
-
-        if (error) {
-            return ReE(res, error.details[0].message, 422);
-        }
+        if (error) return ReE(res, error.details[0].message, 422);
 
         const {
-
             employeeCode,
             firstName,
             lastName,
@@ -29,45 +24,21 @@ const add = async (req, res) => {
             userTypeId,
             departmentId,
             adminStatusId
-
         } = req.body;
 
-        // Employee Code
-
         const employeeExists = await model.Admin.findOne({
-
-            where: {
-                employeeCode,
-                isDeleted: false
-            }
-
+            where: { employeeCode, isDeleted: false }
         });
-
-        if (employeeExists) {
-            return ReE(res, "Employee Code already exists.", 409);
-        }
-
-        // Email
+        if (employeeExists) return ReE(res, "Employee Code already exists.", 409);
 
         const emailExists = await model.Admin.findOne({
-
-            where: {
-                email,
-                isDeleted: false
-            }
-
+            where: { email, isDeleted: false }
         });
-
-        if (emailExists) {
-            return ReE(res, "Email already exists.", 409);
-        }
-
-        // Password Hash
+        if (emailExists) return ReE(res, "Email already exists.", 409);
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const admin = await model.Admin.create({
-
             employeeCode,
             firstName,
             lastName,
@@ -79,298 +50,137 @@ const add = async (req, res) => {
             userTypeId,
             departmentId,
             adminStatusId
-
         });
 
-        return ReS(res, {
-
-            message: MESSAGE.CREATED,
-
-            data: admin
-
-        }, 201);
-
-    }
-
-    catch (error) {
-
+        return ReS(res, { message: MESSAGE.CREATED, data: admin }, 201);
+    } catch (error) {
         return ReE(res, error.message);
-
     }
-
 };
 
-export { add };
-
+export { add }
 
 const fetchAll = async (req, res) => {
-
     try {
-
         const result = await getPaginatedData({
-
             model: model.Admin,
-
             query: req.query,
-
             include: [
-
-                {
-                    model: model.UserRole,
-                    as: "userRole",
-                    attributes: ["id", "name"]
-                },
-
-                {
-                    model: model.UserType,
-                    as: "userType",
-                    attributes: ["id", "name"]
-                },
-
-                {
-                    model: model.Department,
-                    as: "department",
-                    attributes: ["id", "name"]
-                },
-
-                {
-                    model: model.AdminStatus,
-                    as: "status",
-                    attributes: ["id", "name"]
-                }
-
+                { model: model.UserRole, as: "userRole", attributes: ["id", "name"] },
+                { model: model.UserType, as: "userType", attributes: ["id", "name"] },
+                { model: model.Department, as: "department", attributes: ["id", "name"] },
+                { model: model.AdminStatus, as: "status", attributes: ["id", "name"] }
             ],
-
             searchFields: [
-
                 "employeeCode",
                 "firstName",
                 "lastName",
                 "email",
                 "mobileNumber"
-
             ],
-
             allowedSortFields: [
-
                 "id",
                 "employeeCode",
                 "firstName",
                 "lastName",
                 "email",
                 "createdAt"
-
             ]
-
         });
 
-        return ReS(res, {
-
-            message: MESSAGE.FETCHED,
-
-            ...result
-
-        });
-
-    }
-
-    catch (error) {
-
+        return ReS(res, { message: MESSAGE.FETCHED, ...result });
+    } catch (error) {
         return ReE(res, error.message);
-
     }
-
 };
-
-export { fetchAll };
-
 
 const fetchSingle = async (req, res) => {
-
     try {
-
         const admin = await model.Admin.findByPk(req.params.id, {
-
             include: [
-
-                {
-                    model: model.UserRole,
-                    as: "userRole"
-                },
-
-                {
-                    model: model.UserType,
-                    as: "userType"
-                },
-
-                {
-                    model: model.Department,
-                    as: "department"
-                },
-
-                {
-                    model: model.AdminStatus,
-                    as: "status"
-                }
-
+                { model: model.UserRole, as: "userRole" },
+                { model: model.UserType, as: "userType" },
+                { model: model.Department, as: "department" },
+                { model: model.AdminStatus, as: "status" }
             ]
-
         });
 
         if (!admin || admin.isDeleted) {
-
             return ReE(res, MESSAGE.NOT_FOUND, 404);
-
         }
 
-        return ReS(res, {
-
-            data: admin
-
-        });
-
-    }
-
-    catch (error) {
-
+        return ReS(res, { data: admin });
+    } catch (error) {
         return ReE(res, error.message);
-
     }
-
 };
 
-export { fetchSingle };
-
-
 const update = async (req, res) => {
-
     try {
-
         const admin = await model.Admin.findByPk(req.params.id);
-
         if (!admin || admin.isDeleted) {
-
             return ReE(res, MESSAGE.NOT_FOUND, 404);
-
         }
 
         const { error } = validation.updateAdmin.validate(req.body);
+        if (error) return ReE(res, error.details[0].message, 422);
 
-        if (error) {
+        // Check unique email if updating
+        if (req.body.email && req.body.email !== admin.email) {
+            const emailExists = await model.Admin.findOne({
+                where: { email: req.body.email, isDeleted: false, id: { [Op.ne]: admin.id } }
+            });
+            if (emailExists) return ReE(res, "Email already exists.", 409);
+        }
 
-            return ReE(res, error.details[0].message);
-
+        // Check unique employee code if updating
+        if (req.body.employeeCode && req.body.employeeCode !== admin.employeeCode) {
+            const codeExists = await model.Admin.findOne({
+                where: { employeeCode: req.body.employeeCode, isDeleted: false, id: { [Op.ne]: admin.id } }
+            });
+            if (codeExists) return ReE(res, "Employee Code already exists.", 409);
         }
 
         if (req.body.password) {
-
             req.body.password = await bcrypt.hash(req.body.password, 10);
-
         }
 
         await admin.update(req.body);
+        await admin.reload();
 
-        return ReS(res, {
-
-            message: MESSAGE.UPDATED,
-
-            data: admin
-
-        });
-
-    }
-
-    catch (error) {
-
+        return ReS(res, { message: MESSAGE.UPDATED, data: admin });
+    } catch (error) {
         return ReE(res, error.message);
-
     }
-
 };
-
-export { update };
-
 
 const remove = async (req, res) => {
-
     try {
-
         const admin = await model.Admin.findByPk(req.params.id);
-
         if (!admin || admin.isDeleted) {
-
             return ReE(res, MESSAGE.NOT_FOUND, 404);
-
         }
 
-        await admin.update({
-
-            isDeleted: true,
-
-            isActive: false
-
-        });
-
-        return ReS(res, {
-
-            message: MESSAGE.DELETED
-
-        });
-
-    }
-
-    catch (error) {
-
+        await admin.update({ isDeleted: true, isActive: false });
+        return ReS(res, { message: MESSAGE.DELETED });
+    } catch (error) {
         return ReE(res, error.message);
-
     }
-
 };
-
-export { remove };
-
 
 const changeStatus = async (req, res) => {
-
     try {
-
         const admin = await model.Admin.findByPk(req.params.id);
-
         if (!admin || admin.isDeleted) {
-
             return ReE(res, MESSAGE.NOT_FOUND, 404);
-
         }
 
-        await admin.update({
-
-            isActive: !admin.isActive
-
-        });
-
-        return ReS(res, {
-
-            message: "Status Updated Successfully",
-
-            data: admin
-
-        });
-
-    }
-
-    catch (error) {
-
+        await admin.update({ isActive: !admin.isActive });
+        return ReS(res, { message: "Status Updated Successfully", data: admin });
+    } catch (error) {
         return ReE(res, error.message);
-
     }
-
 };
-
-export { changeStatus };
-
-
-
-// ==================================Login==================================
 
 const login = async (req, res) => {
 
@@ -380,61 +190,82 @@ const login = async (req, res) => {
 
         if (!email || !password) {
 
-            return ReE(res, "Email and Password are required.", 422);
+            return ReE(
+                res,
+                "Email and Password are required.",
+                422
+            );
 
         }
 
         const admin = await model.Admin.findOne({
 
             where: {
-
                 email,
-
                 isDeleted: false
-
             }
 
         });
 
         if (!admin) {
 
-            return ReE(res, "Invalid Email or Password.", 401);
+            return ReE(
+                res,
+                "Invalid Email or Password.",
+                401
+            );
+
+        }
+
+        const passwordMatched = await bcrypt.compare(
+            password,
+            admin.password
+        );
+
+        if (!passwordMatched) {
+
+            return ReE(
+                res,
+                "Invalid Email or Password.",
+                401
+            );
 
         }
 
         if (!admin.isActive) {
 
-            return ReE(res, "Account is inactive.", 403);
+            return ReE(
+                res,
+                "Account is inactive.",
+                403
+            );
 
         }
 
-        const passwordMatched = await bcrypt.compare(
+        const accessToken =
+            JwtService.generateAccessToken(admin);
 
-            password,
-
-            admin.password
-
-        );
-
-        if (!passwordMatched) {
-
-            return ReE(res, "Invalid Email or Password.", 401);
-
-        }
-
-        // Generate Tokens
-
-        const accessToken = JwtService.generateAccessToken(admin);
-
-        const refreshToken = JwtService.generateRefreshToken(admin);
-
-        // Save Refresh Token
+        const refreshToken =
+            JwtService.generateRefreshToken(admin);
 
         await admin.update({
 
             refreshToken,
-
             lastLogin: new Date()
+
+        });
+
+        res.cookie("refreshToken", refreshToken, {
+
+            httpOnly: true,
+
+            secure:
+                process.env.NODE_ENV === "production",
+
+            sameSite: "Strict",
+
+            maxAge:
+                7 * 24 * 60 * 60 * 1000
 
         });
 
@@ -480,228 +311,85 @@ const login = async (req, res) => {
 
     catch (error) {
 
-        return ReE(res, error.message);
+        return ReE(
+            res,
+            error.message
+        );
 
     }
 
 };
-
-export { login };
-
-
 
 const refreshToken = async (req, res) => {
-
     try {
+        // Request Body YA Cookies — dono me se token pick karega
+        const token = req.cookies?.refreshToken || req.body?.refreshToken;
 
-        const { refreshToken } = req.body;
-
-        if (!refreshToken) {
-
-            return ReE(res, "Refresh Token Required.", 401);
-
-        }
+        if (!token) return ReE(res, "Refresh Token Required.", 401);
 
         let payload;
-
         try {
-
-            payload = JwtService.verifyRefreshToken(refreshToken);
-
-        }
-
-        catch {
-
+            payload = JwtService.verifyRefreshToken(token);
+        } catch (err) {
             return ReE(res, "Invalid Refresh Token.", 401);
-
         }
 
         const admin = await model.Admin.findOne({
-
-            where: {
-
-                id: payload.id,
-
-                isDeleted: false,
-
-                refreshToken
-
-            }
-
+            where: { id: payload.id, isDeleted: false, refreshToken: token }
         });
 
-        if (!admin) {
-
-            return ReE(res, "Invalid Refresh Token.", 401);
-
-        }
+        if (!admin) return ReE(res, "Invalid Refresh Token.", 401);
 
         const accessToken = JwtService.generateAccessToken(admin);
-
         return ReS(res, {
-
             message: "Token Refreshed Successfully",
-
-            data: {
-
-                accessToken
-
-            }
-
+            data: { accessToken }
         });
-
-    }
-
-    catch (error) {
-
+    } catch (error) {
         return ReE(res, error.message);
-
     }
-
 };
-
-export { refreshToken };
-
 
 const logout = async (req, res) => {
-
     try {
-
         const admin = await model.Admin.findByPk(req.user.id);
+        if (!admin) return ReE(res, "Admin not found.", 404);
 
-        if (!admin) {
-
-            return ReE(res, "Admin not found.", 404);
-
-        }
-
-        await admin.update({
-
-            refreshToken: null
-
-        });
-
-        return ReS(res, {
-
-            message: "Logout Successful"
-
-        });
-
-    }
-
-    catch (error) {
-
+        await admin.update({ refreshToken: null });
+        return ReS(res, { message: "Logout Successful" });
+    } catch (error) {
         return ReE(res, error.message);
-
     }
-
 };
-
-export { logout };
-
 
 const me = async (req, res) => {
-
     try {
-
         const admin = await model.Admin.findOne({
-
-            where: {
-
-                id: req.user.id,
-
-                isDeleted: false
-
-            },
-
-            attributes: {
-
-                exclude: [
-
-                    "password",
-
-                    "refreshToken"
-
-                ]
-
-            },
-
+            where: { id: req.user.id, isDeleted: false },
+            attributes: { exclude: ["password", "refreshToken"] },
             include: [
-
-                {
-
-                    model: model.UserRole,
-
-                    as: "userRole",
-
-                    attributes: [
-
-                        "id",
-
-                        "name"
-
-                    ]
-
-                },
-
-                {
-
-                    model: model.UserType,
-
-                    as: "userType",
-
-                    attributes: [
-
-                        "id",
-
-                        "name"
-
-                    ]
-
-                },
-
-                {
-
-                    model: model.AdminStatus,
-
-                    as: "adminStatus",
-
-                    attributes: [
-
-                        "id",
-
-                        "name"
-
-                    ]
-
-                }
-
+                { model: model.UserRole, as: "userRole", attributes: ["id", "name"] },
+                { model: model.UserType, as: "userType", attributes: ["id", "name"] },
+                { model: model.AdminStatus, as: "status", attributes: ["id", "name"] },
+                { model: model.Department, as: "department",attributes: ["id", "name"] },
             ]
-
         });
 
-        if (!admin) {
+        if (!admin) return ReE(res, "Admin not found.", 404);
 
-            return ReE(res, "Admin not found.", 404);
-
-        }
-
-        return ReS(res, {
-
-            message: "Logged In User",
-
-            data: admin
-
-        });
-
-    }
-
-    catch (error) {
-
+        return ReS(res, { message: "Logged In User", data: admin });
+    } catch (error) {
         return ReE(res, error.message);
-
     }
-
 };
 
-export { me };
+
+export  {fetchAll}
+export  {fetchSingle}
+export  {update}
+export  {remove}
+export  {changeStatus}
+export  {login}
+export  {refreshToken}
+export  {logout}
+export  {me}

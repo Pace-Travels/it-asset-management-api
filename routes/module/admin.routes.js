@@ -1,56 +1,72 @@
 import express from "express";
-
-import * as AdminController from "../../controllers/admin.controller.js";
 import authMiddleware from "../../middleware/auth.middleware.js";
+import { loginLimiter } from "../../middleware/rateLimiter.js"; // Rate limiter import kiya
+import {add, changeStatus, fetchAll, fetchSingle, login, logout, me, refreshToken, remove, update } from "../../controllers/admin.controller.js"
 
 const router = express.Router();
 
-// ================= CRUD =================
+// ================= AUTH ROUTES =================
+
+// Rate limiter login route par add kiya (Brute-force protection)
+router.post(
+    "/login",
+    // loginLimiter, 
+    login
+);
+
+router.post(
+    "/refresh-token",
+    refreshToken
+);
+
+router.post(
+    "/logout",
+    authMiddleware,
+    logout
+);
+
+router.get(
+    "/me",
+    authMiddleware,
+    me
+);
+
+// ================= CRUD ROUTES =================
 
 router.post(
     "/",
-    AdminController.add
+    authMiddleware, // Secured
+    add
 );
 
 router.get(
     "/",
-    AdminController.fetchAll
+    authMiddleware, // Secured
+    fetchAll
 );
 
 router.get(
     "/:id",
-    AdminController.fetchSingle
+    authMiddleware, // Secured
+    fetchSingle
 );
 
 router.put(
     "/:id",
-    AdminController.update
+    authMiddleware, // Secured
+    update
 );
 
 router.delete(
     "/:id",
-    AdminController.remove
+    authMiddleware, // Secured
+    remove
 );
 
 router.patch(
     "/status/:id",
-    AdminController.changeStatus
-);
-
-router.post(
-    "/login", AdminController.login
-);
-
-router.post(
-    "/refresh-token", AdminController.refreshToken
-);
-
-router.post(
-    "/logout", authMiddleware, AdminController.logout
-);
-
-router.get(
-    "/me", authMiddleware, AdminController.me
+    authMiddleware, // Secured
+    changeStatus
 );
 
 export default router;

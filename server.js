@@ -5,6 +5,7 @@ import cors from "cors";
 import compression from "compression";
 import helmet from "helmet";
 import morgan from "morgan";
+import cookieParser from "cookie-parser"; // Cookie Parser Import kiya
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -26,8 +27,17 @@ const __dirname = path.dirname(__filename);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser()); // Cookies read karne ke liye middleware add kiya
 app.use(compression());
-app.use(cors());
+
+// CORS Configuration (Credentials allow karne ke liye)
+app.use(
+    cors({
+        origin: CONFIG.app.clientUrl || true, // Frontend URL ya true (bina origin filter ke credentials allow karne ke liye)
+        credentials: true // Cookies transfer karne ke liye mandatory hai
+    })
+);
+
 app.use(helmet());
 app.use(morgan("dev"));
 
@@ -45,18 +55,16 @@ app.use(
 =========================================== */
 
 app.get("/", (req, res) => {
-
     return res.status(200).json({
         success: true,
         message: "IT Asset Management Backend Running"
     });
-
 });
 
-
-app.use('/api/Itam', router)
+app.use('/api/Itam', router);
 
 app.use(errorMiddleware);
+
 /* ===========================================
         Socket
 =========================================== */

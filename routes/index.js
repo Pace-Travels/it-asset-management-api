@@ -17,7 +17,7 @@ import subscription from "./module/subscription.routes.js";
 import userRole from "./module/userRole.routes.js";
 import admin from "./module/admin.routes.js";
 import menu from "./module/menu.routes.js";
-import rolePermission from "./module/role-permisssion.routes.js"
+import rolePermission from "./module/role-permisssion.routes.js"; // Standardized
 
 const router = Router();
 
@@ -27,7 +27,7 @@ router.use('/vendor-management', vendorManagement);
 router.use('/employee-details', employeeDetails);
 router.use('/server-management', serverManagement);
 router.use('/monitoring-maintenance', monitoringMaintenance);
-router.use('/software-license-management', monitoringMaintenance);
+router.use('/software-license-management', softwareLicenseManagement); // Fixed here
 router.use('/email-account-management', emailAccountManagement);
 router.use('/domain-website-management', domainWebsiteManagement);
 router.use('/ssl-certificate-management', sslCertificateManagement);

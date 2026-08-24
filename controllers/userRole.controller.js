@@ -83,13 +83,11 @@ const fetchAll = async (req, res) => {
                     attributes: [
                         "id",
                         "name",
-                        "code"
                     ]
                 }
             ],
             searchFields: [
                 "name",
-                "code",
                 "description"
             ],
             allowedSortFields: [
@@ -129,7 +127,6 @@ const fetchSingle = async (req, res) => {
                     attributes: [
                         "id",
                         "name",
-                        "code"
                     ]
                 }
             ]
