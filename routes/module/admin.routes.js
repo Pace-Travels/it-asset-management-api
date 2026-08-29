@@ -1,7 +1,7 @@
 import express from "express";
 import authMiddleware from "../../middleware/auth.middleware.js";
 import { loginLimiter } from "../../middleware/rateLimiter.js"; // Rate limiter import kiya
-import {add, changeStatus, fetchAll, fetchSingle, login, logout, me, refreshToken, remove, update } from "../../controllers/admin.controller.js"
+import { add, changeStatus, fetchAll, fetchSingle, getSidebar, login, logout, me, refreshToken, remove, update } from "../../controllers/admin.controller.js"
 
 const router = express.Router();
 
@@ -67,6 +67,12 @@ router.patch(
     "/status/:id",
     authMiddleware, // Secured
     changeStatus
+);
+
+router.get(
+    "/sidebar",
+    authMiddleware, // Secured
+    getSidebar
 );
 
 export default router;

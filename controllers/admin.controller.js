@@ -371,7 +371,7 @@ const me = async (req, res) => {
                 { model: model.UserRole, as: "userRole", attributes: ["id", "name"] },
                 { model: model.UserType, as: "userType", attributes: ["id", "name"] },
                 { model: model.AdminStatus, as: "status", attributes: ["id", "name"] },
-                { model: model.Department, as: "department",attributes: ["id", "name"] },
+                { model: model.Department, as: "department", attributes: ["id", "name"] },
             ]
         });
 
@@ -384,12 +384,303 @@ const me = async (req, res) => {
 };
 
 
-export  {fetchAll}
-export  {fetchSingle}
-export  {update}
-export  {remove}
-export  {changeStatus}
-export  {login}
-export  {refreshToken}
-export  {logout}
-export  {me}
+// ========================================================= Side baar =======================================================
+
+const getSidebar = async (req, res) => {
+
+    try {
+
+        // Logged-in admin ID middleware se aayegi
+        const adminId = req.user.id;
+
+        console.log("SIDEBAR ADMIN ID:", adminId);
+
+        // 1. Admin find karo
+        const admin = await model.Admin.findOne({
+
+            where: {
+                id: adminId,
+                isActive: true,
+                isDeleted: false
+            },
+
+            attributes: [
+                "id",
+                "userRoleId"
+            ]
+
+        });
+
+        console.log("ADMIN FOUND:", !!admin);
+
+        if (!admin) {
+
+            return ReE(
+                res,
+                "Admin not found.",
+                404
+            );
+
+        }
+
+        console.log(
+            "ADMIN ROLE ID:",
+            admin.userRoleId
+        );
+
+
+        // 2. Role ke according menus + permissions fetch karo
+        const rolePermissions =
+            await model.RolePermission.findAll({
+
+                where: {
+
+                    roleId: admin.userRoleId,
+
+                    isActive: true,
+
+                    isDeleted: false
+
+                },
+
+                include: [
+
+                    {
+                        model: model.Menu,
+
+                        as: "menu",
+
+                        where: {
+
+                            isActive: true,
+
+                            isDeleted: false
+
+                        },
+
+                        attributes: [
+
+                            "id",
+                            "parentId",
+                            "name",
+                            "route",
+                            "icon",
+                            "level",
+                            "sortOrder"
+
+                        ]
+
+                    },
+
+                    {
+                        model: model.Permission,
+
+                        as: "permission",
+
+                        where: {
+
+                            isActive: true,
+
+                            isDeleted: false
+
+                        },
+
+                        attributes: [
+
+                            "id",
+                            "name",
+                            "description"
+
+                        ]
+
+                    }
+
+                ],
+
+                order: [
+
+                    [
+                        {
+                            model: model.Menu,
+                            as: "menu"
+                        },
+                        "sortOrder",
+                        "ASC"
+                    ]
+
+                ]
+
+            });
+
+
+        console.log(
+            "ROLE PERMISSION COUNT:",
+            rolePermissions.length
+        );
+
+
+        // 3. Agar permission nahi hai
+        if (!rolePermissions.length) {
+
+            return ReS(
+                res,
+                {
+                    message: "No sidebar menu found.",
+                    data: []
+                }
+            );
+
+        }
+
+
+        // 4. Menu ko frontend-friendly format me convert karo
+
+        const menus = rolePermissions.map(
+            (item) => {
+
+                return {
+
+                    id: item.menu.id,
+
+                    parentId: item.menu.parentId,
+
+                    label: item.menu.name,
+
+                    route: item.menu.route,
+
+                    icon: item.menu.icon,
+
+                    level: item.menu.level,
+
+                    sortOrder: item.menu.sortOrder,
+
+                    permission: {
+
+                        id: item.permission.id,
+
+                        name: item.permission.name,
+
+                        description:
+                            item.permission.description
+
+                    },
+
+                    children: []
+
+                };
+
+            }
+        );
+
+
+        // 5. Parent / Child hierarchy create karo
+
+        const menuMap = new Map();
+
+        menus.forEach((menu) => {
+
+            menuMap.set(
+                menu.id,
+                menu
+            );
+
+        });
+
+
+        const finalMenu = [];
+
+
+        menus.forEach((menu) => {
+
+            // Parent menu
+            if (!menu.parentId) {
+
+                finalMenu.push(menu);
+
+                return;
+
+            }
+
+
+            // Child menu
+            const parent =
+                menuMap.get(menu.parentId);
+
+
+            if (parent) {
+
+                parent.children.push(menu);
+
+            }
+
+        });
+
+
+        // 6. Parent menu ko sort karo
+        finalMenu.sort(
+            (a, b) =>
+                a.sortOrder - b.sortOrder
+        );
+
+
+        // 7. Children ko sort karo
+        finalMenu.forEach(
+            (parent) => {
+
+                parent.children.sort(
+                    (a, b) =>
+                        a.sortOrder -
+                        b.sortOrder
+                );
+
+            }
+        );
+
+
+        console.log(
+            "FINAL SIDEBAR:",
+            JSON.stringify(
+                finalMenu,
+                null,
+                2
+            )
+        );
+
+
+        return ReS(
+            res,
+            {
+                message:
+                    "Sidebar menu fetched successfully.",
+
+                data: finalMenu
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "GET SIDEBAR ERROR:",
+            error
+        );
+
+        return ReE(
+            res,
+            error.message
+        );
+
+    }
+
+};
+
+export { fetchAll }
+export { fetchSingle }
+export { update }
+export { remove }
+export { changeStatus }
+export { login }
+export { refreshToken }
+export { logout }
+export { me }
+export { getSidebar }
