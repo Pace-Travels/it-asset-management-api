@@ -18,8 +18,11 @@ import userRole from "./module/userRole.routes.js";
 import admin from "./module/admin.routes.js";
 import menu from "./module/menu.routes.js";
 import rolePermission from "./module/role-permisssion.routes.js"; // Standardized
+import dashboard from "./module/dashboard.routes.js";
 
 const router = Router();
+
+router.use('/dashboard', dashboard);
 
 router.use('/master-Common-module', moduleRoutes);
 router.use('/asset-information', assetInformationRoutes);
