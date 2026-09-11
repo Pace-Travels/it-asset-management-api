@@ -21,6 +21,11 @@ const addMenu = Joi.object({
         .max(100)
         .allow("", null),
 
+    level: Joi.number()
+        .integer()
+        .min(1)
+        .default(1),
+
     sortOrder: Joi.number()
         .integer()
         .min(0)
@@ -47,6 +52,11 @@ const updateMenu = Joi.object({
         .trim()
         .max(100)
         .allow("", null),
+        
+    level: Joi.number()
+        .integer()
+        .min(1)
+        .default(1),
 
     sortOrder: Joi.number()
         .integer()

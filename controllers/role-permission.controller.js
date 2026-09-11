@@ -146,7 +146,7 @@ const fetchAll = async (req, res) => {
 
                     model: model.UserRole,
 
-                    as: "userRole",
+                    as: "role",
 
                     attributes: [
 
