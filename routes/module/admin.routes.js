@@ -46,6 +46,12 @@ router.get(
 );
 
 router.get(
+    "/sidebar",
+    authMiddleware, // Secured
+    getSidebar
+);
+
+router.get(
     "/:id",
     authMiddleware, // Secured
     fetchSingle
@@ -67,12 +73,6 @@ router.patch(
     "/status/:id",
     authMiddleware, // Secured
     changeStatus
-);
-
-router.get(
-    "/sidebar",
-    authMiddleware, // Secured
-    getSidebar
 );
 
 export default router;

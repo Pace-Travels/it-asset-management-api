@@ -15,6 +15,7 @@ import logger from "./services/logger.service.js";
 import { init as socketInit } from "./services/socket.service.js";
 import router from "./routes/index.js";
 import errorMiddleware from "./middleware/error.middleware.js";
+import seedData from "./services/seeder.service.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -82,6 +83,9 @@ try {
     // await db.sequelize.sync({ alter: true });
     // await db.sequelize.sync({ force: true });
     console.log("✅ Tables Synced");
+
+    // Initialize System Data
+    await seedData();
 } catch (error) {
     logger.error(error.message);
     console.log(error);

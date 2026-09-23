@@ -1,0 +1,494 @@
+{
+  "Admin": {
+    "tableName": "admins",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "UserRole",
+        "as": "userRole",
+        "foreignKey": "userRoleId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "UserType",
+        "as": "userType",
+        "foreignKey": "userTypeId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "Department",
+        "as": "department",
+        "foreignKey": "departmentId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "AdminStatus",
+        "as": "status",
+        "foreignKey": "adminStatusId"
+      }
+    ]
+  },
+  "AdminStatus": {
+    "tableName": "admin_satus",
+    "associations": []
+  },
+  "AdminType": {
+    "tableName": "admin_type",
+    "associations": []
+  },
+  "AssetInformation": {
+    "tableName": "asset_information",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "AssetInformationCategory",
+        "as": "category",
+        "foreignKey": "categoryId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "VendorManagement",
+        "as": "vendor",
+        "foreignKey": "vendorId"
+      },
+      {
+        "type": "HasMany",
+        "target": "EmployeeAssetAllocation",
+        "as": "allocations",
+        "foreignKey": "assetId",
+        "sourceKey": "id"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "AssetInformationStatus",
+        "as": "status",
+        "foreignKey": "statusId"
+      }
+    ]
+  },
+  "AssetInformationCategory": {
+    "tableName": "asset_information_category",
+    "associations": [
+      {
+        "type": "HasMany",
+        "target": "AssetInformation",
+        "as": "assets",
+        "foreignKey": "categoryId",
+        "sourceKey": "id"
+      }
+    ]
+  },
+  "AssetInformationStatus": {
+    "tableName": "asset_information_status",
+    "associations": [
+      {
+        "type": "HasMany",
+        "target": "AssetInformation",
+        "as": "assets",
+        "foreignKey": "statusId",
+        "sourceKey": "id"
+      }
+    ]
+  },
+  "CloudSubscriptionManagement": {
+    "tableName": "cloud_subscription_management",
+    "associations": []
+  },
+  "CloudSubscriptionManagementService": {
+    "tableName": "cloud_subscription_management_service",
+    "associations": []
+  },
+  "Department": {
+    "tableName": "department",
+    "associations": [
+      {
+        "type": "HasMany",
+        "target": "EmployeeDetails",
+        "as": "employees",
+        "foreignKey": "departmentId",
+        "sourceKey": "id"
+      }
+    ]
+  },
+  "DomainWebsiteManagement": {
+    "tableName": "domain_website_management",
+    "associations": [
+      {
+        "type": "HasMany",
+        "target": "SSLCertificateManagement",
+        "as": "sslCertificates",
+        "foreignKey": "domainId",
+        "sourceKey": "id"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "VendorManagement",
+        "as": "vendor",
+        "foreignKey": "vendorId"
+      }
+    ]
+  },
+  "EmailAccountManagement": {
+    "tableName": "email_account_management",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "EmployeeDetails",
+        "as": "employee",
+        "foreignKey": "employeeId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "EmailAccountRenewalManagementStatus",
+        "as": "status",
+        "foreignKey": "statusId"
+      }
+    ]
+  },
+  "EmailAccountRenewalManagementStatus": {
+    "tableName": "email_account_renewal_management_status",
+    "associations": []
+  },
+  "EmployeeAssetAllocation": {
+    "tableName": "employee_asset_allocation",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "EmployeeDetails",
+        "as": "employee",
+        "foreignKey": "employeeId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "AssetInformation",
+        "as": "asset",
+        "foreignKey": "assetId"
+      }
+    ]
+  },
+  "EmployeeDetails": {
+    "tableName": "employee_details",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "Department",
+        "as": "department",
+        "foreignKey": "departmentId"
+      },
+      {
+        "type": "HasMany",
+        "target": "EmailAccountManagement",
+        "as": "emailAccounts",
+        "foreignKey": "employeeId",
+        "sourceKey": "id"
+      }
+    ]
+  },
+  "InternetManagement": {
+    "tableName": "internet_management",
+    "associations": []
+  },
+  "Menu": {
+    "tableName": "menus",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "Menu",
+        "as": "parentMenu",
+        "foreignKey": "parentId"
+      },
+      {
+        "type": "HasMany",
+        "target": "Menu",
+        "as": "childMenus",
+        "foreignKey": "parentId",
+        "sourceKey": "id"
+      },
+      {
+        "type": "HasMany",
+        "target": "RolePermission",
+        "as": "rolePermissions",
+        "foreignKey": "menuId",
+        "sourceKey": "id"
+      }
+    ]
+  },
+  "MobileRechargeManagement": {
+    "tableName": "mobile_recharge_management",
+    "associations": []
+  },
+  "MobileRechargeManagementStatus": {
+    "tableName": "mobile_recharge_management_status",
+    "associations": []
+  },
+  "MonitoringBackupStatus": {
+    "tableName": "monitoring_backup_status",
+    "associations": [
+      {
+        "type": "HasMany",
+        "target": "MonitoringMaintenance",
+        "as": "monitoring",
+        "foreignKey": "backupStatusId",
+        "sourceKey": "id"
+      }
+    ]
+  },
+  "MonitoringMaintenance": {
+    "tableName": "monitoring_maintenance",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "MonitoringBackupStatus",
+        "as": "backupStatus",
+        "foreignKey": "backupStatusId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "MonitoringServerHealthStatus",
+        "as": "serverHealthStatus",
+        "foreignKey": "serverHealthStatusId"
+      }
+    ]
+  },
+  "MonitoringServerHealthStatus": {
+    "tableName": "monitoring_server_health_status",
+    "associations": [
+      {
+        "type": "HasMany",
+        "target": "MonitoringMaintenance",
+        "as": "monitoring",
+        "foreignKey": "serverHealthStatusId",
+        "sourceKey": "id"
+      }
+    ]
+  },
+  "Permission": {
+    "tableName": "permissions",
+    "associations": [
+      {
+        "type": "HasMany",
+        "target": "RolePermission",
+        "as": "rolePermissions",
+        "foreignKey": "permissionId",
+        "sourceKey": "id"
+      }
+    ]
+  },
+  "RenewalReminderManagementReminderType": {
+    "tableName": "renewal_reminder_management_reminder_type",
+    "associations": []
+  },
+  "RolePermission": {
+    "tableName": "role_permissions",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "UserRole",
+        "as": "role",
+        "foreignKey": "roleId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "Menu",
+        "as": "menu",
+        "foreignKey": "menuId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "Permission",
+        "as": "permission",
+        "foreignKey": "permissionId"
+      }
+    ]
+  },
+  "ServerManagement": {
+    "tableName": "server_management",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "ServerManagementCategory",
+        "as": "serverCategory",
+        "foreignKey": "serverCategoryId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "ServerManagementStatus",
+        "as": "serverStatus",
+        "foreignKey": "serverStatusId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "VendorManagement",
+        "as": "vendor",
+        "foreignKey": "vendorId"
+      }
+    ]
+  },
+  "ServerManagementCategory": {
+    "tableName": "server_management_category",
+    "associations": [
+      {
+        "type": "HasMany",
+        "target": "ServerManagement",
+        "as": "servers",
+        "foreignKey": "serverCategoryId",
+        "sourceKey": "id"
+      }
+    ]
+  },
+  "ServerManagementStatus": {
+    "tableName": "server_management_status",
+    "associations": []
+  },
+  "SoftwareLicenseManagement": {
+    "tableName": "software_license_management",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "SoftwareLicenseRenewalManagementCategory",
+        "as": "softwareCategory",
+        "foreignKey": "softwareCategoryId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "VendorManagement",
+        "as": "vendor",
+        "foreignKey": "vendorId"
+      }
+    ]
+  },
+  "SoftwareLicenseRenewalManagementCategory": {
+    "tableName": "software_license_renewal_management_category",
+    "associations": [
+      {
+        "type": "HasMany",
+        "target": "SoftwareLicenseManagement",
+        "as": "softwareLicenses",
+        "foreignKey": "softwareCategoryId",
+        "sourceKey": "id"
+      }
+    ]
+  },
+  "SSLCertificateManagement": {
+    "tableName": "ssl_certificate_management",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "DomainWebsiteManagement",
+        "as": "domain",
+        "foreignKey": "domainId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "SSLCertificateManagementStatus",
+        "as": "status",
+        "foreignKey": "statusId"
+      }
+    ]
+  },
+  "SSLCertificateManagementStatus": {
+    "tableName": "ssl_certificate_management_status",
+    "associations": [
+      {
+        "type": "HasMany",
+        "target": "SSLCertificateManagement",
+        "as": "status",
+        "foreignKey": "statusId",
+        "sourceKey": "id"
+      }
+    ]
+  },
+  "Subscription": {
+    "tableName": "subscription",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "VendorManagement",
+        "as": "vendor",
+        "foreignKey": "vendorId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "SubscriptionPaymentMethod",
+        "as": "paymentMethod",
+        "foreignKey": "paymentMethodId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "SubscriptionReminderType",
+        "as": "reminderType",
+        "foreignKey": "reminderTypeId"
+      },
+      {
+        "type": "BelongsTo",
+        "target": "EmployeeDetails",
+        "as": "paymentInitiatedBy",
+        "foreignKey": "paymentInitiatedById"
+      }
+    ]
+  },
+  "SubscriptionReminderType": {
+    "tableName": "subscription_reminder_type",
+    "associations": []
+  },
+  "SubscriptionPaymentMethod": {
+    "tableName": "subscription_payment_method",
+    "associations": []
+  },
+  "UserRole": {
+    "tableName": "user_roles",
+    "associations": [
+      {
+        "type": "BelongsTo",
+        "target": "UserRoleStatus",
+        "as": "status",
+        "foreignKey": "userRoleStatusId"
+      }
+    ]
+  },
+  "UserPermissionType": {
+    "tableName": "user_permission_type",
+    "associations": []
+  },
+  "UserRoleStatus": {
+    "tableName": "user_role_status",
+    "associations": []
+  },
+  "UserType": {
+    "tableName": "user_types",
+    "associations": []
+  },
+  "VendorManagement": {
+    "tableName": "vendor_management",
+    "associations": [
+      {
+        "type": "HasMany",
+        "target": "AssetInformation",
+        "as": "assets",
+        "foreignKey": "vendorId",
+        "sourceKey": "id"
+      },
+      {
+        "type": "HasMany",
+        "target": "ServerManagement",
+        "as": "servers",
+        "foreignKey": "vendorId",
+        "sourceKey": "id"
+      },
+      {
+        "type": "HasMany",
+        "target": "SoftwareLicenseManagement",
+        "as": "softwareLicenses",
+        "foreignKey": "vendorId",
+        "sourceKey": "id"
+      },
+      {
+        "type": "HasMany",
+        "target": "DomainWebsiteManagement",
+        "as": "domains",
+        "foreignKey": "vendorId",
+        "sourceKey": "id"
+      }
+    ]
+  }
+}
