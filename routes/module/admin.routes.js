@@ -108,13 +108,4 @@ router.patch(
     authMiddleware,
     changeStatus
 );
-
-<<<<<<< HEAD
-=======
-
-// =====================================================
-// EXPORT ROUTER
-// =====================================================
-
->>>>>>> 85dbb95345aeef8ff43ed1d096b8e2f274690a07
 export default router;
