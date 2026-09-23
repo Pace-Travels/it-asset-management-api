@@ -79,7 +79,7 @@ socketInit(server);
 try {
     await db.sequelize.authenticate();
     console.log("✅ Database Connected");
-
+    // await db.sequelize.sync();
     // await db.sequelize.sync({ alter: true });
     // await db.sequelize.sync({ force: true });
     console.log("✅ Tables Synced");

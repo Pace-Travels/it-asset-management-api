@@ -330,6 +330,15 @@ const seedData = async () => {
         if (adminCount === 0 && superAdminRole) {
             const [adminStatus] = await model.AdminStatus.findOrCreate({ where: { name: 'Active' }, defaults: { name: 'Active' } });
             const [userType] = await model.UserType.findOrCreate({ where: { name: 'Internal Employee' }, defaults: { name: 'Internal Employee' } });
+            const [department] = await model.Department.findOrCreate({
+                where: { name: 'IT' },
+                defaults: {
+                    name: 'IT',
+                    description: 'Information Technology',
+                    isActive: true,
+                    isDeleted: false
+                }
+            });
 
             const hashedPassword = await bcrypt.hash('admin@123', 10);
             await model.Admin.create({
@@ -342,6 +351,7 @@ const seedData = async () => {
                 userRoleId: superAdminRole.id,
                 adminStatusId: adminStatus.id,
                 userTypeId: userType.id,
+                departmentId: department.id,
                 isActive: true,
                 isDeleted: false
             });
