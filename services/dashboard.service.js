@@ -33,7 +33,7 @@ const getDashboardStats = async () => {
         include: [{
             model: model.AssetInformationCategory,
             as: 'category',
-            attributes: ['categoryName']
+            attributes: ['name']
         }],
         group: ['categoryId', 'category.id']
     });
@@ -50,7 +50,7 @@ const getDashboardStats = async () => {
 
     assetsByCategory.forEach(cat => {
         if(cat.category) {
-            categoryData.labels.push(cat.category.categoryName);
+            categoryData.labels.push(cat.category.name);
             categoryData.datasets[0].data.push(parseInt(cat.dataValues.count, 10));
         }
     });
@@ -66,16 +66,16 @@ const getDashboardStats = async () => {
         order: [['createdAt', 'DESC']],
         limit: 5,
         include: [
-            { model: model.AssetInformationCategory, as: 'category', attributes: ['categoryName'] },
-            { model: model.AssetInformationStatus, as: 'status', attributes: ['statusName'] }
+            { model: model.AssetInformationCategory, as: 'category', attributes: ['name'] },
+            { model: model.AssetInformationStatus, as: 'status', attributes: ['name'] }
         ]
     });
 
     const recentAssets = recentAssetsRaw.map(asset => ({
         assetCode: asset.assetCode,
         assetName: asset.assetName,
-        category: asset.category ? asset.category.categoryName : 'Unknown',
-        status: asset.status ? asset.status.statusName : 'Unknown'
+        category: asset.category ? asset.category.name : 'Unknown',
+        status: asset.status ? asset.status.name : 'Unknown'
     }));
 
     // 4. Warranty Alerts (Expires in next 30 days)
